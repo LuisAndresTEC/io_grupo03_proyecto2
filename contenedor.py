@@ -91,7 +91,7 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
         if i.__get_peso__() <= peso_restante:
             objetos_validos.append(i)
 
-    resultado = []
+    resultado_final = []
     #Por cada objeto en los objetos validos se llama a la funcion recursiva con el peso restante menos el peso del objeto
     for i in objetos_validos:
         #Agrega a una lista los objetos restantes
@@ -100,15 +100,19 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
             if i != j:
                 objetos_restantes.append(j)
         #Llama a la funcion recursiva con el peso restante menos el peso del objeto actual y los objetos restantes
-        res_tmp = mochila_fuerza_bruta_aux(
+        resultado_temporal = mochila_fuerza_bruta_aux(
             objetos_restantes, peso_restante - i.__get_peso__())
         #Si el resultado temporal es 0 entonces asume que es el resultado final
-        if len(res_tmp) == 0:
-            resultado.append([i])
+        if len(resultado_temporal) == 0:
+            resultado_final.append([i])
         else:
+            #Suma todos los anteriores resultados
+            lista_anteriores = []
+            for j in resultado_temporal:
+                lista_anteriores.append([i] + j)
         #Si no es 0 entonces agrega el objeto actual a cada resultado temporal
-            resultado.extend([[i]+x for x in res_tmp])
-    return resultado
+            resultado_final.extend(lista_anteriores)
+    return resultado_final
 
 def main():
     print(len(sys.argv))
