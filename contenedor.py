@@ -114,6 +114,32 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
             resultado_final.extend(lista_anteriores)
     return resultado_final
 
+
+
+
+def mochila_algorithm(W, wt, val, n):
+
+    # Base Case
+    if n == 0 or W == 0:
+        return 0
+
+	# If weight of the nth item is
+	# more than Knapsack of capacity W,
+	# then this item cannot be included
+	# in the optimal solution
+    if (wt[n-1] > W):
+        print("Los objetos de peso:", wt, "y valor:", val, "se pueden meter en la mochila")
+        return mochila_algorithm(W, wt, val, n - 1)
+
+	# return the maximum of two cases:
+	# (1) nth item included
+	# (2) not included
+    else:
+        return max(
+            val[n-1] + mochila_algorithm(W - wt[n - 1], wt, val, n - 1),
+            mochila_algorithm(W, wt, val, n - 1))
+
+
 def main():
     print(len(sys.argv))
     datos = separarDatos("p1_mochila.txt")
@@ -121,14 +147,16 @@ def main():
     print(datos)
     mochila_object = mochila(datos)
     inicio = time.time()
-    resultado = mochila_fuerza_bruta(mochila_object.posibles_objetos, mochila_object.capacidad)
+    resultado = mochila_algorithm(mochila_object.__get_capacidad__(), [i.__get_peso__() for i in mochila_object.__get_posibles_objetos__()], [i.__get_valor__() for i in mochila_object.__get_posibles_objetos__()], len(mochila_object.__get_posibles_objetos__()))
+    #resultado = mochila_fuerza_bruta(mochila_object.posibles_objetos, mochila_object.capacidad)
     final = time.time()
-    beneficio = beneficio_total(resultado)
-    peso = peso_total(resultado)
-    print("el peso total es: ", peso)
-    print("El beneficio total es: ", beneficio)
-    for i in resultado:
-        print(i.__get_peso__(), i.__get_valor__())
+    #beneficio = beneficio_total(resultado)
+    #peso = peso_total(resultado)
+    #print("el peso total es: ", peso)
+    #print("El beneficio total es: ", beneficio)
+    #for i in resultado:
+        #print(i.__get_peso__(), i.__get_valor__())
+    print("El beneficio total fue de: ", resultado)
     print("Tiempo de ejecucion: ", final - inicio)
     exit(0)
 
