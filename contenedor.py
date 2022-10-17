@@ -78,7 +78,7 @@ def beneficio_total(objetos):
     return sum(i.__get_valor__() for i in objetos)
 
 
-#Esta funcion calculara mochila por medio de fuerza bruta
+#--------------------------------------Mochila por medio de Fuerza Bruta--------------------------------------
 def mochila_fuerza_bruta(objetos, capacidad):
 
     resultado = max(mochila_fuerza_bruta_aux(objetos, capacidad), key=beneficio_total)
@@ -116,49 +116,63 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
 
 
 
+#--------------------------------------Mochila por medio de Programacion Dinamica--------------------------------------
+def mochila_pd(peso_mochila, peso_objeto, valor, cantidad_objetos):
 
-def mochila_algorithm(W, wt, val, n):
-
-    # Base Case
-    if n == 0 or W == 0:
+    if cantidad_objetos == 0 or peso_mochila == 0:
         return 0
 
-	# If weight of the nth item is
-	# more than Knapsack of capacity W,
-	# then this item cannot be included
-	# in the optimal solution
-    if (wt[n-1] > W):
-        print("Los objetos de peso:", wt, "y valor:", val, "se pueden meter en la mochila")
-        return mochila_algorithm(W, wt, val, n - 1)
+    if (peso_objeto[cantidad_objetos - 1] > peso_mochila):
+        objetos = "Los objetos de peso: " + str(peso_objeto) + " y valor: " + str(valor) + " se ingresaron en la mochila."
+        writeFile(objetos)
+        return mochila_pd(peso_mochila, peso_objeto, valor, cantidad_objetos - 1)
 
-	# return the maximum of two cases:
-	# (1) nth item included
-	# (2) not included
     else:
         return max(
-            val[n-1] + mochila_algorithm(W - wt[n - 1], wt, val, n - 1),
-            mochila_algorithm(W, wt, val, n - 1))
+            valor[cantidad_objetos - 1] + mochila_pd(peso_mochila - peso_objeto[cantidad_objetos - 1], peso_objeto, valor, cantidad_objetos - 1),
+            mochila_pd(peso_mochila, peso_objeto, valor, cantidad_objetos - 1))
 
 
 def main():
-    print(len(sys.argv))
-    datos = separarDatos("p1_mochila.txt")
-    print(type(datos))
-    print(datos)
-    mochila_object = mochila(datos)
-    inicio = time.time()
-    resultado = mochila_algorithm(mochila_object.__get_capacidad__(), [i.__get_peso__() for i in mochila_object.__get_posibles_objetos__()], [i.__get_valor__() for i in mochila_object.__get_posibles_objetos__()], len(mochila_object.__get_posibles_objetos__()))
-    #resultado = mochila_fuerza_bruta(mochila_object.posibles_objetos, mochila_object.capacidad)
-    final = time.time()
-    #beneficio = beneficio_total(resultado)
-    #peso = peso_total(resultado)
-    #print("el peso total es: ", peso)
-    #print("El beneficio total es: ", beneficio)
-    #for i in resultado:
-        #print(i.__get_peso__(), i.__get_valor__())
-    print("El beneficio total fue de: ", resultado)
-    print("Tiempo de ejecucion: ", final - inicio)
-    exit(0)
+    if sys.argv[1] == "1":
+        removeFile()
+        datos = separarDatos(sys.argv[2])
+        mochila_object = mochila(datos)
+        inicio = time.time()
+        resultado = mochila_fuerza_bruta(mochila_object.posibles_objetos, mochila_object.capacidad)
+        final = time.time()
+        pesos = []
+        valores = []
+        for i in resultado:
+            pesos.append(i.__get_peso__())
+        for i in resultado:
+            valores.append(i.__get_valor__())
+        writeFile("Fuerza Bruta")
+        writeFile("Beneficio maximo: " + str(beneficio_total(resultado)))
+        writeFile("Objetos seleccionados de peso: " + str(pesos) + " y valor: " + str(valores))
+        writeFile("Tiempo de ejecucion: " + str(final - inicio))
+        print("Ejecucion terminada correctamente")
+        exit(0)
+    elif sys.argv[1] == "2":
+        removeFile()
+        datos = separarDatos(sys.argv[2])
+        mochila_object = mochila(datos)
+        writeFile("Programacion Dinamica")
+        inicio = time.time()
+        resultado = mochila_pd(mochila_object.__get_capacidad__(),
+                               [i.__get_peso__() for i in mochila_object.__get_posibles_objetos__()],
+                               [i.__get_valor__() for i in mochila_object.__get_posibles_objetos__()],
+                               len(mochila_object.__get_posibles_objetos__()))
+        final = time.time()
+        writeFile("Beneficio maximo: " + str(resultado))
+        writeFile("Tiempo de ejecucion: " + str(final - inicio))
+        print("Ejecucion terminada correctamente")
+        exit(0)
+    else:
+        print("Opcion invalida")
+        removeFile()
+        writeFile("Opcion invalida seleccionada")
+        exit(1)
 
 
 

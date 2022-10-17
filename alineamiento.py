@@ -41,257 +41,178 @@ def separarDatos(nombre_archivo):
 
 
 
-def get_minimum_penalty(x: str, y: str, pxy: int, pgap: int):
+#-----------------------------------------------------------Alineamiento por fuerza bruta------------------------------------------------------------
+"""
+Recursive function to find the minimum penalty for sequence alignment
+Inputs: seq1, seq2, gap_penalty, mismatch_penalty
+Outputs: aligned strings, score matrix
+Restrictions: None
+"""
+def sequence_alignment_bruce_force(seq1, seq2, gap_penalty = 2, mismatch_penalty = 1):
     """
-    Function to find out the minimum penalty
+    Recursive function to find the minimum penalty for sequence alignment
+    Inputs: seq1, seq2, gap_penalty, mismatch_penalty
+    Outputs: aligned strings, score matrix
+    Restrictions: None
+    """
+    # base case
+    if len(seq1) == 0:
+        return seq2, len(seq2) * gap_penalty
+    if len(seq2) == 0:
+        return seq1, len(seq1) * gap_penalty
+    # recursive case
+    # case 1: seq1[0] is aligned with seq2[0]
+    if seq1[0] == seq2[0]:
+        aligned_seq, penalty = sequence_alignment_bruce_force(seq1[1:], seq2[1:], gap_penalty, mismatch_penalty)
+        aligned_seq = seq1[0] + aligned_seq
+        return aligned_seq, penalty
+    # case 2: seq1[0] is aligned with a gap
+    aligned_seq, penalty = sequence_alignment_bruce_force(seq1, seq2[1:], gap_penalty, mismatch_penalty)
+    aligned_seq = '-' + aligned_seq
+    penalty += gap_penalty
+    # case 3: seq2[0] is aligned with a gap
+    aligned_seq2, penalty2 = sequence_alignment_bruce_force(seq1[1:], seq2, gap_penalty, mismatch_penalty)
+    aligned_seq2 = '-' + aligned_seq2
+    penalty2 += gap_penalty
+    # return the best alignment
+    if penalty < penalty2:
+        return aligned_seq, penalty
+    else:
+        return aligned_seq2, penalty2
 
-    :param x: pattern X
-    :param y: pattern Y
-    :param pxy: penalty of mis-matching the characters of X and Y
-    :param pgap: penalty of a gap between pattern elements
-    """
+
+
+
+
+
+
+#-----------------------------------------------------------Alineamiento de manera Dinamica------------------------------------------------------------
+def alignment_dp(x: str, y: str): #ESTE ES otro
 
     # initializing variables
-    i = 0
-    j = 0
-
-    # pattern lengths
-    m = len(x)
-    n = len(y)
+    pxy = 1
+    pgap = 2
 
     # table for storing optimal substructure answers
-    dp = np.zeros([m + 1, n + 1], dtype=int)  # int dp[m+1][n+1] = {0};
+    tablaEnteros = np.zeros([len(x) + 1, len(y) + 1], dtype=int)  # int dp[m+1][len(y)+1] = {0};
 
     # initialising the table
-    dp[0:(m + 1), 0] = [i * pgap for i in range(m + 1)]
-    dp[0, 0:(n + 1)] = [i * pgap for i in range(n + 1)]
+    tablaEnteros[0:(len(x) + 1), 0] = [i * pgap for i in range(len(x) + 1)]
+    tablaEnteros[0, 0:(len(y) + 1)] = [i * pgap for i in range(len(y) + 1)]
 
     # calculating the minimum penalty
-    i = 1
-    while i <= m:
-        j = 1
-        while j <= n:
-            if x[i - 1] == y[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1]
+    fila = 1
+    while fila <= len(x):
+        columna = 1
+        while columna <= len(y):
+            if x[fila - 1] == y[columna - 1]:
+                tablaEnteros[fila][columna] = tablaEnteros[fila - 1][columna - 1]
             else:
-                dp[i][j] = min(dp[i - 1][j - 1] + pxy,
-                               dp[i - 1][j] + pgap,
-                               dp[i][j - 1] + pgap)
-            j += 1
-        i += 1
+                tablaEnteros[fila][columna] = min(tablaEnteros[fila - 1][columna - 1] + pxy,
+                               tablaEnteros[fila - 1][columna] + pgap,
+                               tablaEnteros[fila][columna - 1] + pgap)
+            columna += 1
+        fila += 1
 
     # Reconstructing the solution
-    l = n + m  # maximum possible length
-    i = m
-    j = n
+    cantFilas = len(x)
+    cantColumna = len(y)
 
-    xpos = l
-    ypos = l
+    xPos = len(x) + len(y)
+    yPos = len(x) + len(y)
 
     # Final answers for the respective strings
-    xans = np.zeros(l + 1, dtype=int)
-    yans = np.zeros(l + 1, dtype=int)
+    repuestasFilas = np.zeros(len(x) + len(y) + 1, dtype=int)
+    respuestasColumnas = np.zeros(len(x) + len(y) + 1, dtype=int)
 
-    while not (i == 0 or j == 0):
-        # print(f"i: {i}, j: {j}")
-        if x[i - 1] == y[j - 1]:
-            xans[xpos] = ord(x[i - 1])
-            yans[ypos] = ord(y[j - 1])
-            xpos -= 1
-            ypos -= 1
-            i -= 1
-            j -= 1
-        elif (dp[i - 1][j - 1] + pxy) == dp[i][j]:
+    while not (cantFilas == 0 or cantColumna == 0):
+        if x[cantFilas - 1] == y[cantColumna - 1]:
+            repuestasFilas[xPos] = ord(x[cantFilas - 1])
+            respuestasColumnas[yPos] = ord(y[cantColumna - 1])
+            xPos -= 1
+            yPos -= 1
+            cantFilas -= 1
+            cantColumna -= 1
+        elif (tablaEnteros[cantFilas - 1][cantColumna - 1] + pxy) == tablaEnteros[cantFilas][cantColumna]:
+            repuestasFilas[xPos] = ord(x[cantFilas - 1])
+            respuestasColumnas[yPos] = ord(y[cantColumna - 1])
+            xPos -= 1
+            yPos -= 1
+            cantFilas -= 1
+            cantColumna -= 1
+        elif (tablaEnteros[cantFilas - 1][cantColumna] + pgap) == tablaEnteros[cantFilas][cantColumna]:
+            repuestasFilas[xPos] = ord(x[cantFilas - 1])
+            respuestasColumnas[yPos] = ord('_')
+            xPos -= 1
+            yPos -= 1
+            cantFilas -= 1
+        elif (tablaEnteros[cantFilas][cantColumna - 1] + pgap) == tablaEnteros[cantFilas][cantColumna]:
+            repuestasFilas[xPos] = ord('_')
+            respuestasColumnas[yPos] = ord(y[cantColumna - 1])
+            xPos -= 1
+            yPos -= 1
+            cantColumna -= 1
 
-            xans[xpos] = ord(x[i - 1])
-            yans[ypos] = ord(y[j - 1])
-            xpos -= 1
-            ypos -= 1
-            i -= 1
-            j -= 1
-
-        elif (dp[i - 1][j] + pgap) == dp[i][j]:
-            xans[xpos] = ord(x[i - 1])
-            yans[ypos] = ord('_')
-            xpos -= 1
-            ypos -= 1
-            i -= 1
-
-        elif (dp[i][j - 1] + pgap) == dp[i][j]:
-            xans[xpos] = ord('_')
-            yans[ypos] = ord(y[j - 1])
-            xpos -= 1
-            ypos -= 1
-            j -= 1
-
-    while xpos > 0:
-        if i > 0:
-            i -= 1
-            xans[xpos] = ord(x[i])
-            xpos -= 1
+    while xPos > 0:
+        if cantFilas > 0:
+            cantFilas -= 1
+            repuestasFilas[xPos] = ord(x[cantFilas])
+            xPos -= 1
         else:
-            xans[xpos] = ord('_')
-            xpos -= 1
+            repuestasFilas[xPos] = ord('_')
+            xPos -= 1
 
-    while ypos > 0:
-        if j > 0:
-            j -= 1
-            yans[ypos] = ord(y[j])
-            ypos -= 1
+    while yPos > 0:
+        if cantColumna > 0:
+            cantColumna -= 1
+            respuestasColumnas[yPos] = ord(y[cantColumna])
+            yPos -= 1
         else:
-            yans[ypos] = ord('_')
-            ypos -= 1
+            respuestasColumnas[yPos] = ord('_')
+            yPos -= 1
 
-    # Since we have assumed the answer to be n+m long,
+    # Since we have assumed the answer to be len(y)+m long,
     # we need to remove the extra gaps in the starting
     # id represents the index from which the arrays
-    # xans, yans are useful
+    # repuestasFilas, respuestasColumnas are useful
     id = 1
-    i = l
-    while i >= 1:
-        if (chr(yans[i]) == '_') and chr(xans[i]) == '_':
-            id = i + 1
+    sumatoria = len(x) + len(y)
+    while sumatoria >= 1:
+        if (chr(respuestasColumnas[sumatoria]) == '_') and chr(repuestasFilas[sumatoria]) == '_':
+            id = sumatoria + 1
             break
 
-        i -= 1
+        sumatoria -= 1
 
-    # Printing the final answer
-    print(f"Minimum Penalty in aligning the genes = {dp[m][n]}")
-    print("The aligned genes are:")
+    print("Los genes ya alineados son:")
     # X
-    i = id
+    seleccionado= id
     x_seq = ""
-    while i <= l:
-        x_seq += chr(xans[i])
-        i += 1
-    print(f"X seq: {x_seq}")
+    while seleccionado <= len(x) + len(y):
+        x_seq += chr(repuestasFilas[seleccionado])
+        seleccionado += 1
+    print(f"Secuencia X: {x_seq}")
 
     # Y
-    i = id
+    seleccionado = id
     y_seq = ""
-    while i <= l:
-        y_seq += chr(yans[i])
-        i += 1
-    print(f"Y seq: {y_seq}")
+    while seleccionado <= len(x) + len(y):
+        y_seq += chr(respuestasColumnas[seleccionado])
+        seleccionado += 1
+    print(f"Secuencia Y: {y_seq}")
 
-from collections import deque
-
-
-def all_alignments(x, y):
-    """Return an iterable of all alignments of two
-    sequences.
-
-    x, y -- Sequences.
-    """
-
-    def F(x, y):
-        """A helper function that recursively builds the
-        alignments.
-
-        x, y -- Sequence indices for the original x and y.
-        """
-        if len(x) == 0 and len(y) == 0:
-            yield deque()
-
-        scenarios = []
-        if len(x) > 0 and len(y) > 0:
-            scenarios.append((x[0], x[1:], y[0], y[1:]))
-        if len(x) > 0:
-            scenarios.append((x[0], x[1:], None, y))
-        if len(y) > 0:
-            scenarios.append((None, x, y[0], y[1:]))
-
-        # NOTE: "xh" and "xt" stand for "x-head" and "x-tail",
-        # with "head" being the front of the sequence, and
-        # "tail" being the rest of the sequence. Similarly for
-        # "yh" and "yt".
-        for xh, xt, yh, yt in scenarios:
-            for alignment in F(xt, yt):
-                alignment.appendleft((xh, yh))
-                yield alignment
-
-    alignments = F(range(len(x)), range(len(y)))
-    return map(list, alignments)
-
-
-from itertools import product
-from collections import deque
-
-
-def needleman_wunsch(x, y):
-    """Run the Needleman-Wunsch algorithm on two sequences.
-
-    x, y -- sequences.
-
-    Code based on pseudocode in Section 3 of:
-
-    Naveed, Tahir; Siddiqui, Imitaz Saeed; Ahmed, Shaftab.
-    "Parallel Needleman-Wunsch Algorithm for Grid." n.d.
-    https://upload.wikimedia.org/wikipedia/en/c/c4/ParallelNeedlemanAlgorithm.pdf
-    """
-    N, M = len(x), len(y)
-    s = lambda a, b: int(a == b)
-
-    DIAG = -1, -1
-    LEFT = -1, 0
-    UP = 0, -1
-
-    # Create tables F and Ptr
-    F = {}
-    Ptr = {}
-
-    F[-1, -1] = 0
-    for i in range(N):
-        F[i, -1] = -i
-    for j in range(M):
-        F[-1, j] = -j
-
-    option_Ptr = DIAG, LEFT, UP
-    for i, j in product(range(N), range(M)):
-        option_F = (
-            F[i - 1, j - 1] + s(x[i], y[j]),
-            F[i - 1, j] - 1,
-            F[i, j - 1] - 1,
-        )
-        F[i, j], Ptr[i, j] = max(zip(option_F, option_Ptr))
-
-    # Work backwards from (N - 1, M - 1) to (0, 0)
-    # to find the best alignment.
-    alignment = deque()
-    i, j = N - 1, M - 1
-    while i >= 0 and j >= 0:
-        direction = Ptr[i, j]
-        if direction == DIAG:
-            element = i, j
-        elif direction == LEFT:
-            element = i, None
-        elif direction == UP:
-            element = None, j
-        alignment.appendleft(element)
-        di, dj = direction
-        i, j = i + di, j + dj
-    while i >= 0:
-        alignment.appendleft((i, None))
-        i -= 1
-    while j >= 0:
-        alignment.appendleft((None, j))
-        j -= 1
-
-    return list(alignment)
+    score = 0
+    for i in range(len(x_seq)):
+        if x_seq[i] == y_seq[i]:
+            score += 1
+        elif x_seq[i] == '_' or y_seq[i] == '_':
+            score -= 2
+        else:
+            score -= 1
+    print("El puntaje de la secuencia es de: ", score)
 
 
 
-def align_fast(x, y):
-    """Align two sequences, maximizing the
-    alignment score, using the Needleman-Wunsch
-    algorithm.
-
-    x, y -- sequences.
-    """
-    return needleman_wunsch(x, y)
-
-
-align_fast("CAT", "CT")
 def main():
     """
     Test the get_minimum_penalty function
@@ -304,13 +225,11 @@ def main():
     gene1 = datos[0][0]
     gene2 = datos[1][0]
     # initialising penalties of different types
-    mismatch_penalty = 3
-    gap_penalty = 2
     inicio = time.time()
-    resultado = align_fast(gene1, gene2)
-    #get_minimum_penalty(gene1, gene2, mismatch_penalty, gap_penalty)
+    resultado = sequence_alignment_bruce_force(gene1, gene2)
+    #alignment_dp(gene1, gene2)
     final = time.time()
-    print("El resultado es: ", list(resultado))
+    print("El resultado es: ", resultado)
     print("Tiempo de ejecucion: ", final - inicio)
     exit(0)
 

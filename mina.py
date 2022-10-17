@@ -42,6 +42,16 @@ def separarDatos(nombre_archivo):
             datos2[i][j] = int(datos2[i][j])
     return datos2
 
+#---------------------------------- Algoritmo Fuerza Bruta ----------------------------------
+def mina_fuerza_bruta(gold, n, m):
+    oro_maximo = 0
+
+    for i in range(n):
+        # Recursive function call for  ith row.
+        oro_actual = mina_aux(gold, i, 0, n, m)
+        oro_maximo = max(oro_maximo, oro_actual)
+
+    return oro_maximo
 
 def mina_aux(oro, x, y, filas, columnas):
     # Base condition.
@@ -58,15 +68,57 @@ def mina_aux(oro, x, y, filas, columnas):
     return oro[x][y] + max(max(derecha_arriba, derecha_abajo), derecha)
 
 
-def mina(gold, n, m):
-    oro_maximo = 0
+#---------------------------------- Algoritmo Programacion Dinamica ----------------------------------
+def mina_pd(gold, m, n):
+    # Create a table for storing
+    # intermediate results
+    # and initialize all cells to 0.
+    # The first row of
+    # goldMineTable gives the
+    # maximum gold that the miner
+    # can collect when starts that row
+    goldTable = [[0 for i in range(n)]
+                 for j in range(m)]
 
-    for i in range(n):
-        # Recursive function call for  ith row.
-        oro_actual = mina_aux(gold, i, 0, n, m)
-        oro_maximo = max(oro_maximo, oro_actual)
+    for col in range(n - 1, -1, -1):
+        for row in range(m):
 
-    return oro_maximo
+            # Gold collected on going to
+            # the cell on the right(->)
+            if (col == n - 1):
+                right = 0
+            else:
+                right = goldTable[row][col + 1]
+
+            # Gold collected on going to
+            # the cell to right up (/)
+            if (row == 0 or col == n - 1):
+                right_up = 0
+            else:
+                right_up = goldTable[row - 1][col + 1]
+
+            # Gold collected on going to
+            # the cell to right down (\)
+            if (row == m - 1 or col == n - 1):
+                right_down = 0
+            else:
+                right_down = goldTable[row + 1][col + 1]
+
+            # Max gold collected from taking
+            # either of the above 3 paths
+            goldTable[row][col] = gold[row][col] + max(right, right_up, right_down)
+
+    # The max amount of gold
+    # collected will be the max
+    # value in first column of all rows
+    res = goldTable[0][0]
+    for i in range(1, m):
+        res = max(res, goldTable[i][0])
+
+    return res
+
+
+
 
 
 def main():
@@ -75,7 +127,8 @@ def main():
     print(type(datos[1][1]))
     print(datos)
     inicio = time.time()
-    resultado = mina(datos, len(datos), len(datos[0]))
+    #resultado = mina_fuerza_bruta(datos, len(datos), len(datos[0]))
+    resultado = mina_pd(datos, len(datos), len(datos[0]))
     final = time.time()
     print("El resultado es: ", resultado)
     print("Tiempo de ejecucion: ", final - inicio)
