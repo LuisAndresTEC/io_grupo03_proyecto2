@@ -117,21 +117,20 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
 
 
 #--------------------------------------Mochila por medio de Programacion Dinamica--------------------------------------
-def mochila_pd(peso_mochila, peso_objeto, valor, cantidad_objetos):
-
-    if cantidad_objetos == 0 or peso_mochila == 0:
-        return 0
-
-    if (peso_objeto[cantidad_objetos - 1] > peso_mochila):
-        objetos = "Los objetos de peso: " + str(peso_objeto) + " y valor: " + str(valor) + " se ingresaron en la mochila."
-        writeFile(objetos)
-        return mochila_pd(peso_mochila, peso_objeto, valor, cantidad_objetos - 1)
-
-    else:
-        return max(
-            valor[cantidad_objetos - 1] + mochila_pd(peso_mochila - peso_objeto[cantidad_objetos - 1], peso_objeto, valor, cantidad_objetos - 1),
-            mochila_pd(peso_mochila, peso_objeto, valor, cantidad_objetos - 1))
-
+def mochila_pd(W, wt, val, n):
+    K = [[0 for x in range(W + 1)] for x in range(n + 1)]
+    objetos = []
+    for i in range(n + 1):
+        for w in range(W + 1):
+            if i == 0 or w == 0:
+                K[i][w] = 0
+            elif wt[i - 1] <= w:
+                K[i][w] = max(val[i - 1]
+                              + K[i - 1][w - wt[i - 1]],
+                              K[i - 1][w])
+            else:
+                K[i][w] = K[i - 1][w]
+    return K[n][W]
 
 def main():
     if sys.argv[1] == "1":
@@ -164,6 +163,7 @@ def main():
                                [i.__get_valor__() for i in mochila_object.__get_posibles_objetos__()],
                                len(mochila_object.__get_posibles_objetos__()))
         final = time.time()
+        print(resultado)
         writeFile("Beneficio maximo: " + str(resultado))
         writeFile("Tiempo de ejecucion: " + str(final - inicio))
         print("Ejecucion terminada correctamente")

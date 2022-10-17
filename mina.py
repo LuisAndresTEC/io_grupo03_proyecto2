@@ -69,7 +69,7 @@ def mina_aux(oro, x, y, filas, columnas):
 
 
 #---------------------------------- Algoritmo Programacion Dinamica ----------------------------------
-def mina_pd(gold, m, n):
+def mina_pd(valor, m, n):
     # Create a table for storing
     # intermediate results
     # and initialize all cells to 0.
@@ -77,63 +77,78 @@ def mina_pd(gold, m, n):
     # goldMineTable gives the
     # maximum gold that the miner
     # can collect when starts that row
-    goldTable = [[0 for i in range(n)]
+    matriz = [[0 for i in range(n)]
                  for j in range(m)]
 
-    for col in range(n - 1, -1, -1):
-        for row in range(m):
+    for columnas in range(n - 1, -1, -1):
+        for filas in range(m):
 
             # Gold collected on going to
             # the cell on the right(->)
-            if (col == n - 1):
-                right = 0
+            if (columnas == n - 1):
+                derecha = 0
             else:
-                right = goldTable[row][col + 1]
+                derecha = matriz[filas][columnas + 1]
 
             # Gold collected on going to
             # the cell to right up (/)
-            if (row == 0 or col == n - 1):
-                right_up = 0
+            if (filas == 0 or columnas == n - 1):
+                derecha_arriba = 0
             else:
-                right_up = goldTable[row - 1][col + 1]
+                derecha_arriba = matriz[filas - 1][columnas + 1]
 
             # Gold collected on going to
             # the cell to right down (\)
-            if (row == m - 1 or col == n - 1):
-                right_down = 0
+            if (filas == m - 1 or columnas == n - 1):
+                derecha_abajo = 0
             else:
-                right_down = goldTable[row + 1][col + 1]
+                derecha_abajo = matriz[filas + 1][columnas + 1]
 
             # Max gold collected from taking
             # either of the above 3 paths
-            goldTable[row][col] = gold[row][col] + max(right, right_up, right_down)
+            matriz[filas][columnas] = valor[filas][columnas] + max(derecha, derecha_arriba, derecha_abajo)
 
     # The max amount of gold
     # collected will be the max
     # value in first column of all rows
-    res = goldTable[0][0]
+    resultado = matriz[0][0]
     for i in range(1, m):
-        res = max(res, goldTable[i][0])
+        resultado = max(resultado, matriz[i][0])
 
-    return res
+    return resultado
 
 
 
 
 
 def main():
-    print(len(sys.argv))
-    datos = separarDatos("p2_mina.txt")
-    print(type(datos[1][1]))
-    print(datos)
-    inicio = time.time()
-    #resultado = mina_fuerza_bruta(datos, len(datos), len(datos[0]))
-    resultado = mina_pd(datos, len(datos), len(datos[0]))
-    final = time.time()
-    print("El resultado es: ", resultado)
-    print("Tiempo de ejecucion: ", final - inicio)
-    exit(0)
-
+    if sys.argv[1] == "1":
+        removeFile()
+        datos = separarDatos(sys.argv[2])
+        inicio = time.time()
+        resultado = mina_fuerza_bruta(datos, len(datos), len(datos[0]))
+        final = time.time()
+        writeFile("Fuerza Bruta")
+        writeFile("El resultado es: " + str(resultado))
+        writeFile("Tiempo de ejecucion: " + str(final - inicio))
+        print("Ejecucion terminada correctamente")
+        exit(0)
+    elif sys.argv[1] == "2":
+        removeFile()
+        datos = separarDatos(sys.argv[2])
+        inicio = time.time()
+        resultado = mina_pd(datos, len(datos), len(datos[0]))
+        final = time.time()
+        writeFile("Programacion Dinamica")
+        writeFile("El resultado es: " + str(resultado))
+        writeFile("Tiempo de ejecucion: " + str(final - inicio))
+        print("Ejecucion terminada correctamente")
+        exit(0)
+    else:
+        print("Opcion invalida")
+        removeFile()
+        writeFile("Opcion invalida seleccionada")
+        exit(1)
 
 
 

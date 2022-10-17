@@ -1,0 +1,4 @@
+
+Fuerza Bruta
+El resultado es: 16
+Tiempo de ejecucion: 6.914138793945312e-05

@@ -1,2 +1,4 @@
 
-Opcion invalida seleccionada
+Programacion Dinamica
+Beneficio maximo: 162
+Tiempo de ejecucion: 6.151199340820312e-05
