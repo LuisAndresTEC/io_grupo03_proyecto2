@@ -117,20 +117,48 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
 
 
 #--------------------------------------Mochila por medio de Programacion Dinamica--------------------------------------
-def mochila_pd(W, wt, val, n):
-    K = [[0 for x in range(W + 1)] for x in range(n + 1)]
-    objetos = []
-    for i in range(n + 1):
-        for w in range(W + 1):
-            if i == 0 or w == 0:
-                K[i][w] = 0
-            elif wt[i - 1] <= w:
-                K[i][w] = max(val[i - 1]
-                              + K[i - 1][w - wt[i - 1]],
-                              K[i - 1][w])
-            else:
-                K[i][w] = K[i - 1][w]
-    return K[n][W]
+def mochila_pd (objetos, capacidad):
+    w = capacidad
+    n = len(objetos)
+    pesos = []
+    valores = []
+    for i in objetos:
+        pesos.append(i.__get_peso__())
+        valores.append(i.__get_valor__())
+
+    matriz = [[0 for x in range(w + 1)] for x in range(n + 1)]
+    c = 0
+    r = 0
+    while r < (w + 1):
+        matriz[0][r] = 0
+        r += 1
+
+    while c < (n + 1):
+        matriz[c][0] = 0
+        c += 1
+
+    item = 1
+    while item <= n:
+        capacity = 1
+        while capacity <= w:
+            maxValWithoutCurr = matriz[item - 1][capacity] # This is guaranteed to exist
+            maxValWithCurr = 0 # We initialize this value to 0
+
+            weightOfCurr = pesos[item - 1] # We use item -1 to account for the extra row at the top
+            if capacity >= weightOfCurr:# We check if the knapsack can fit the current item
+                maxValWithCurr = valores[item - 1] # If so, maxValWithCurr is at least the value of the current item
+
+                remainingCapacity = capacity - weightOfCurr # remainingCapacity must be at least 0
+                maxValWithCurr += matriz[item - 1][remainingCapacity] # Add the maximum value obtainable with the remaining capacity
+
+            matriz[item][capacity] = max(maxValWithoutCurr, maxValWithCurr) # Pick the larger of the two
+            capacity += 1
+        item += 1
+
+    return matriz[n][w]
+    #print(matriz) # Visualization of the table
+
+
 
 def main():
     if sys.argv[1] == "1":
@@ -158,12 +186,8 @@ def main():
         mochila_object = mochila(datos)
         writeFile("Programacion Dinamica")
         inicio = time.time()
-        resultado = mochila_pd(mochila_object.__get_capacidad__(),
-                               [i.__get_peso__() for i in mochila_object.__get_posibles_objetos__()],
-                               [i.__get_valor__() for i in mochila_object.__get_posibles_objetos__()],
-                               len(mochila_object.__get_posibles_objetos__()))
+        resultado = mochila_pd(mochila_object.posibles_objetos, mochila_object.capacidad)
         final = time.time()
-        print(resultado)
         writeFile("Beneficio maximo: " + str(resultado))
         writeFile("Tiempo de ejecucion: " + str(final - inicio))
         print("Ejecucion terminada correctamente")
