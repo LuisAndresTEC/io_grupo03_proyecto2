@@ -40,54 +40,7 @@ def separarDatos(nombre_archivo):
     return datos2
 
 
-
-#-----------------------------------------------------------Alineamiento por fuerza bruta------------------------------------------------------------
-"""
-Recursive function to find the minimum penalty for sequence alignment
-Inputs: seq1, seq2, gap_penalty, mismatch_penalty
-Outputs: aligned strings, score matrix
-Restrictions: None
-"""
-def sequence_alignment_bruce_force(seq1, seq2, gap_penalty = 2, mismatch_penalty = 1):
-    """
-    Recursive function to find the minimum penalty for sequence alignment
-    Inputs: seq1, seq2, gap_penalty, mismatch_penalty
-    Outputs: aligned strings, score matrix
-    Restrictions: None
-    """
-    # base case
-    if len(seq1) == 0:
-        return seq2, len(seq2) * gap_penalty
-    if len(seq2) == 0:
-        return seq1, len(seq1) * gap_penalty
-    # recursive case
-    # case 1: seq1[0] is aligned with seq2[0]
-    if seq1[0] == seq2[0]:
-        aligned_seq, penalty = sequence_alignment_bruce_force(seq1[1:], seq2[1:], gap_penalty, mismatch_penalty)
-        aligned_seq = seq1[0] + aligned_seq
-        return aligned_seq, penalty
-    # case 2: seq1[0] is aligned with a gap
-    aligned_seq, penalty = sequence_alignment_bruce_force(seq1, seq2[1:], gap_penalty, mismatch_penalty)
-    aligned_seq = '-' + aligned_seq
-    penalty += gap_penalty
-    # case 3: seq2[0] is aligned with a gap
-    aligned_seq2, penalty2 = sequence_alignment_bruce_force(seq1[1:], seq2, gap_penalty, mismatch_penalty)
-    aligned_seq2 = '-' + aligned_seq2
-    penalty2 += gap_penalty
-    # return the best alignment
-    if penalty < penalty2:
-        return aligned_seq, penalty
-    else:
-        return aligned_seq2, penalty2
-
-
-
-
-
-
-
-#-----------------------------------------------------------Alineamiento de manera Dinamica------------------------------------------------------------
-def alignment_dp(x: str, y: str): #ESTE ES otro
+def alineamiento_pd(x: str, y: str):
 
     # initializing variables
     pxy = 1
@@ -226,17 +179,12 @@ def main():
     gene2 = datos[1][0]
     # initialising penalties of different types
     inicio = time.time()
-    resultado = sequence_alignment_bruce_force(gene1, gene2)
+    resultado = alineamiento_pd(gene1, gene2)
     #alignment_dp(gene1, gene2)
     final = time.time()
     print("El resultado es: ", resultado)
     print("Tiempo de ejecucion: ", final - inicio)
     exit(0)
-
-
-
-
-
 
 
 main()

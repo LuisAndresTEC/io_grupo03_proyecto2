@@ -1,4 +1,4 @@
 
 Programacion Dinamica
 Beneficio maximo: 162
-Tiempo de ejecucion: 6.580352783203125e-05
+Tiempo de ejecucion: 8.654594421386719e-05
