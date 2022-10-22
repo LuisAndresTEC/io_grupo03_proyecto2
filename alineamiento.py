@@ -137,14 +137,13 @@ def alineamiento(x: str, y: str):
 
         sumatoria -= 1
 
-    print("Los genes ya alineados son:")
+
     # X
     seleccionado= id
     x_seq = ""
     while seleccionado <= len(x) + len(y):
         x_seq += chr(repuestasFilas[seleccionado])
         seleccionado += 1
-    print(f"Secuencia X: {x_seq}")
 
     # Y
     seleccionado = id
@@ -152,7 +151,6 @@ def alineamiento(x: str, y: str):
     while seleccionado <= len(x) + len(y):
         y_seq += chr(respuestasColumnas[seleccionado])
         seleccionado += 1
-    print(f"Secuencia Y: {y_seq}")
 
     score = 0
     for i in range(len(x_seq)):
@@ -162,7 +160,8 @@ def alineamiento(x: str, y: str):
             score -= 2
         else:
             score -= 1
-    print("El puntaje de la secuencia es de: ", score)
+
+    return x_seq, y_seq, score
 
 
 
@@ -171,6 +170,7 @@ def main():
     Test the get_minimum_penalty function
     """
     # input strings
+    removeFile()
     datos = separarDatos(sys.argv[1])
     gene1 = datos[0][0]
     gene2 = datos[1][0]
@@ -178,8 +178,12 @@ def main():
     inicio = time.time()
     resultado = alineamiento(gene1, gene2)
     final = time.time()
-    writeFile("El resultado es: " + resultado)
-    writeFile("Tiempo de ejecucion: " + (final - inicio))
+    writeFile("Los genes ya alineados son:")
+    writeFile("El resultado es: ")
+    writeFile(resultado[0])
+    writeFile(resultado[1])
+    writeFile("El puntaje es: " + str(resultado[2]))
+    writeFile("Tiempo de ejecucion: " + str(final - inicio))
     exit(0)
 
 

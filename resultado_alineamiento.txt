@@ -1,0 +1,7 @@
+
+Los genes ya alineados son:
+El resultado es: 
+ACGGTGAGCAGT
+___GTGAG_AGA
+El puntaje es: -2
+Tiempo de ejecucion: 0.00026035308837890625
