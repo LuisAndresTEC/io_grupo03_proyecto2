@@ -4,4 +4,4 @@ El resultado es:
 ACGGTGAGCAGT
 ___GTGAG_AGA
 El puntaje es: -2
-Tiempo de ejecucion: 0.00026035308837890625
+Tiempo de ejecucion: 0.000431060791015625

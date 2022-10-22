@@ -47,14 +47,14 @@ def mina_fuerza_bruta(gold, n, m):
     oro_maximo = 0
 
     for i in range(n):
-        # Recursive function call for  ith row.
+        # Función recursiva que va linea por linea
         oro_actual = mina_aux(gold, i, 0, n, m)
         oro_maximo = max(oro_maximo, oro_actual)
 
     return oro_maximo
 
 def mina_aux(oro, x, y, filas, columnas):
-    # Base condition.
+    #condicón base
     if ((x < 0) or (x == filas) or (y == columnas)):
         return 0
 
@@ -64,53 +64,45 @@ def mina_aux(oro, x, y, filas, columnas):
 
     derecha_abajo = mina_aux(oro, x + 1, y + 1, filas, columnas)
 
-    # Return the maximum and store the value
+    # Retorna el maximo y almacena el valor
     return oro[x][y] + max(max(derecha_arriba, derecha_abajo), derecha)
 
 
 #---------------------------------- Algoritmo Programacion Dinamica ----------------------------------
 def mina_pd(valor, m, n):
-    # Create a table for storing
-    # intermediate results
-    # and initialize all cells to 0.
-    # The first row of
-    # goldMineTable gives the
-    # maximum gold that the miner
-    # can collect when starts that row
+
+    # Se crea la matriz
     matriz = [[0 for i in range(n)]
                  for j in range(m)]
 
-    for columnas in range(n - 1, -1, -1):
-        for filas in range(m):
 
-            # Gold collected on going to
-            # the cell on the right(->)
-            if (columnas == n - 1):
+    for filas in range(n - 1, -1, -1):
+        for columnas in range(m):
+            # se mueve a la siguiente selda a la derecha
+            if (filas == n - 1):
                 derecha = 0
             else:
-                derecha = matriz[filas][columnas + 1]
+                derecha = matriz[columnas][filas + 1]
 
-            # Gold collected on going to
-            # the cell to right up (/)
-            if (filas == 0 or columnas == n - 1):
+            # se mueve a la siguiente selda a la derecha arriba
+            if (columnas == 0 or filas == n - 1):
                 derecha_arriba = 0
             else:
-                derecha_arriba = matriz[filas - 1][columnas + 1]
+                derecha_arriba = matriz[columnas - 1][filas + 1]
 
-            # Gold collected on going to
-            # the cell to right down (\)
-            if (filas == m - 1 or columnas == n - 1):
+            # se mueve a la siguiente selda a la derecha abajo
+            if (columnas == m - 1 or filas == n - 1):
                 derecha_abajo = 0
             else:
-                derecha_abajo = matriz[filas + 1][columnas + 1]
+                derecha_abajo = matriz[columnas + 1][filas + 1]
 
-            # Max gold collected from taking
-            # either of the above 3 paths
-            matriz[filas][columnas] = valor[filas][columnas] + max(derecha, derecha_arriba, derecha_abajo)
+            # Oro máximo recolectado al tomar cualquiera de los 3 caminos anteriores
+            matriz[columnas][filas] = valor[columnas][filas] + max(derecha, derecha_arriba, derecha_abajo)
 
-    # The max amount of gold
-    # collected will be the max
-    # value in first column of all rows
+    """La cantidad máxima de oro
+       recolectado será el máximo
+       valor en la primera columna de todas las filas
+    """
     resultado = matriz[0][0]
     for i in range(1, m):
         resultado = max(resultado, matriz[i][0])

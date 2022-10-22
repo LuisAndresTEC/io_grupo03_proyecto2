@@ -2,4 +2,4 @@
 Fuerza Bruta
 Beneficio maximo: 162
 Objetos seleccionados de peso: [10, 10, 8] y valor: [60, 62, 40]
-Tiempo de ejecucion: 0.00017452239990234375
+Tiempo de ejecucion: 0.00015354156494140625

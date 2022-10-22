@@ -3,6 +3,12 @@ import sys
 import os
 import time
 
+"""
+Estas funciones son las encargadas del proceso de lectura y escritura de los archivos de entrandas 
+de datos y de salida de resultados.
+"""
+
+#Función que eliman el archivo de resultados previo a la formualción de un nuevo resultado
 def removeFile():
     try:
         os.remove("resultado_alineamiento.txt")
@@ -40,20 +46,24 @@ def separarDatos(nombre_archivo):
     return datos2
 
 
+""""
+Descripción: Función encargada de aplicar el algoritmo de alineamiento de genes
+Entradas: Una cadena de genes X y otra cadena de genes Y
+Salidas: La solución óptima del alineamiento de genes
+"""
 def alineamiento(x: str, y: str):
 
-    # initializing variables
     pxy = 1
     pgap = 2
 
-    # table for storing optimal substructure answers
+    # tabla para almacenar las posibles soluciones óptimas
     tablaEnteros = np.zeros([len(x) + 1, len(y) + 1], dtype=int)  # int dp[m+1][len(y)+1] = {0};
 
-    # initialising the table
+    # Se inicializa la tabla de enteros
     tablaEnteros[0:(len(x) + 1), 0] = [i * pgap for i in range(len(x) + 1)]
     tablaEnteros[0, 0:(len(y) + 1)] = [i * pgap for i in range(len(y) + 1)]
 
-    # calculating the minimum penalty
+    # Se calcula la minima penalidad
     fila = 1
     while fila <= len(x):
         columna = 1
@@ -67,17 +77,18 @@ def alineamiento(x: str, y: str):
             columna += 1
         fila += 1
 
-    # Reconstructing the solution
+    # Se reestructura la solución
     cantFilas = len(x)
     cantColumna = len(y)
 
     xPos = len(x) + len(y)
     yPos = len(x) + len(y)
 
-    # Final answers for the respective strings
+    # Respuestas finales para el alineamiento
     repuestasFilas = np.zeros(len(x) + len(y) + 1, dtype=int)
     respuestasColumnas = np.zeros(len(x) + len(y) + 1, dtype=int)
 
+    # mientras que no se haya procesado toda la matriz
     while not (cantFilas == 0 or cantColumna == 0):
         if x[cantFilas - 1] == y[cantColumna - 1]:
             repuestasFilas[xPos] = ord(x[cantFilas - 1])
@@ -128,6 +139,13 @@ def alineamiento(x: str, y: str):
     # we need to remove the extra gaps in the starting
     # id represents the index from which the arrays
     # repuestasFilas, respuestasColumnas are useful
+
+    """
+    Como hemos supuesto que la respuesta es len(y)+m de largo,
+    necesitamos eliminar los espacios adicionales en el inicio
+    id representa el índice del que provienen las matrices
+    respuestasFilas, respuestasColumnas son útiles
+    """
     id = 1
     sumatoria = len(x) + len(y)
     while sumatoria >= 1:
@@ -166,15 +184,10 @@ def alineamiento(x: str, y: str):
 
 
 def main():
-    """
-    Test the get_minimum_penalty function
-    """
-    # input strings
     removeFile()
     datos = separarDatos(sys.argv[1])
     gene1 = datos[0][0]
     gene2 = datos[1][0]
-    # initialising penalties of different types
     inicio = time.time()
     resultado = alineamiento(gene1, gene2)
     final = time.time()

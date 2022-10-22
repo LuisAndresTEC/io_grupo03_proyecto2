@@ -1,7 +1,7 @@
 import sys
 import os
 import time
-#import numpy as np
+
 from operator import itemgetter
 
 # Esta funcion se encargará de eliminar el archivo txt para borrar todo su contenido
@@ -23,7 +23,6 @@ def writeFile(text):
     reader = open("resultado_mochila.txt", 'a')
     if type(text) == type(list):
         for i in text:
-            #reader.write("\n")
             i = str(i)
             reader.write(i)
     else:
@@ -137,20 +136,19 @@ def mochila_pd (objetos, capacidad):
 
     item = 1
     while item <= len(objetos):
-        capacity = 1
-        while capacity <= capacidad:
-            maxValWithoutCurr = matriz[item - 1][capacity] # This is guaranteed to exist
-            maxValWithCurr = 0 # We initialize this value to 0
+        cabida = 1
+        while cabida <= capacidad:
+            maxValWithoutCurr = matriz[item - 1][cabida]
+            maxValWithCurr = 0 
 
-            weightOfCurr = pesos[item - 1] # We use item -1 to account for the extra row at the top
-            if capacity >= weightOfCurr:# We check if the knapsack can fit the current item
-                maxValWithCurr = valores[item - 1] # If so, maxValWithCurr is at least the value of the current item
+            weightOfCurr = pesos[item - 1] 
+            if cabida >= weightOfCurr:
+                maxValWithCurr = valores[item - 1] 
 
-                remainingCapacity = capacity - weightOfCurr # remainingCapacity must be at least 0
-                maxValWithCurr += matriz[item - 1][remainingCapacity] # Add the maximum value obtainable with the remaining capacity
-
-            matriz[item][capacity] = max(maxValWithoutCurr, maxValWithCurr) # Pick the larger of the two
-            capacity += 1
+                remainingCapacity = cabida - weightOfCurr
+                maxValWithCurr += matriz[item - 1][remainingCapacity] 
+            matriz[item][cabida] = max(maxValWithoutCurr, maxValWithCurr)
+            cabida += 1
         item += 1
 
     #Se determinan los objetos que se deben de tomar
