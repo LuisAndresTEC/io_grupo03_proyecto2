@@ -162,12 +162,7 @@ def mochila_pd (objetos, capacidad):
             paquetes.append(objetos[filas - 1].__get_peso__())
             columnas -= objetos[filas - 1].__get_peso__()
         filas -= 1
-    print(paquetes)
     return matriz[len(objetos)][capacidad], paquetes
-    #print(matriz) # Visualization of the table
-
-
-"""sacar los items que se usaron"""
 
 
 

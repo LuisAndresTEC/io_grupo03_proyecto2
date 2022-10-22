@@ -2,4 +2,4 @@
 Programacion Dinamica
 Beneficio maximo: 162
 Los objetos seleccionados son: [8, 10, 10]
-Tiempo de ejecucion: 0.000202178955078125
+Tiempo de ejecucion: 0.00010251998901367188
