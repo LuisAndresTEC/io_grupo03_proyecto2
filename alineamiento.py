@@ -40,7 +40,7 @@ def separarDatos(nombre_archivo):
     return datos2
 
 
-def alineamiento_pd(x: str, y: str):
+def alineamiento(x: str, y: str):
 
     # initializing variables
     pxy = 1
@@ -171,19 +171,15 @@ def main():
     Test the get_minimum_penalty function
     """
     # input strings
-    print(len(sys.argv))
-    datos = separarDatos("p1_alineamiento.txt")
-    print(type(datos))
-    print(datos)
+    datos = separarDatos(sys.argv[1])
     gene1 = datos[0][0]
     gene2 = datos[1][0]
     # initialising penalties of different types
     inicio = time.time()
-    resultado = alineamiento_pd(gene1, gene2)
-    #alignment_dp(gene1, gene2)
+    resultado = alineamiento(gene1, gene2)
     final = time.time()
-    print("El resultado es: ", resultado)
-    print("Tiempo de ejecucion: ", final - inicio)
+    writeFile("El resultado es: " + resultado)
+    writeFile("Tiempo de ejecucion: " + (final - inicio))
     exit(0)
 
 

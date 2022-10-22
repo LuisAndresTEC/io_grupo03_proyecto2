@@ -118,29 +118,27 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
 
 #--------------------------------------Mochila por medio de Programacion Dinamica--------------------------------------
 def mochila_pd (objetos, capacidad):
-    w = capacidad
-    n = len(objetos)
     pesos = []
     valores = []
     for i in objetos:
         pesos.append(i.__get_peso__())
         valores.append(i.__get_valor__())
 
-    matriz = [[0 for x in range(w + 1)] for x in range(n + 1)]
+    matriz = [[0 for x in range(capacidad + 1)] for x in range(len(objetos) + 1)]
     c = 0
     r = 0
-    while r < (w + 1):
+    while r < (capacidad + 1):
         matriz[0][r] = 0
         r += 1
 
-    while c < (n + 1):
+    while c < (len(objetos) + 1):
         matriz[c][0] = 0
         c += 1
 
     item = 1
-    while item <= n:
+    while item <= len(objetos):
         capacity = 1
-        while capacity <= w:
+        while capacity <= capacidad:
             maxValWithoutCurr = matriz[item - 1][capacity] # This is guaranteed to exist
             maxValWithCurr = 0 # We initialize this value to 0
 
@@ -155,8 +153,23 @@ def mochila_pd (objetos, capacidad):
             capacity += 1
         item += 1
 
-    return matriz[n][w]
+    #Se determinan los objetos que se deben de tomar
+    filas = len(matriz) - 1
+    columnas = len(matriz[0]) - 1
+    paquetes = []
+    while filas > 0:
+        if matriz[filas][columnas] != matriz[filas - 1][columnas]:
+            paquetes.append(objetos[filas - 1].__get_peso__())
+            columnas -= objetos[filas - 1].__get_peso__()
+        filas -= 1
+    print(paquetes)
+    return matriz[len(objetos)][capacidad], paquetes
     #print(matriz) # Visualization of the table
+
+
+"""sacar los items que se usaron"""
+
+
 
 
 
@@ -188,7 +201,8 @@ def main():
         inicio = time.time()
         resultado = mochila_pd(mochila_object.posibles_objetos, mochila_object.capacidad)
         final = time.time()
-        writeFile("Beneficio maximo: " + str(resultado))
+        writeFile("Beneficio maximo: " + str(resultado[0]))
+        writeFile("Los objetos seleccionados son: " + str(resultado[1]))
         writeFile("Tiempo de ejecucion: " + str(final - inicio))
         print("Ejecucion terminada correctamente")
         exit(0)
