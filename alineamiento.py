@@ -4,7 +4,7 @@ import os
 import time
 
 """
-Estas funciones son las encargadas del proceso de lectura y escritura de los archivos de entrandas 
+Estas funciones son las encargadas del proceso de lectura y escritura de los archivos de entradas 
 de datos y de salida de resultados.
 """
 
@@ -134,11 +134,6 @@ def alineamiento(x: str, y: str):
         else:
             respuestasColumnas[yPos] = ord('_')
             yPos -= 1
-
-    # Since we have assumed the answer to be len(y)+m long,
-    # we need to remove the extra gaps in the starting
-    # id represents the index from which the arrays
-    # repuestasFilas, respuestasColumnas are useful
 
     """
     Como hemos supuesto que la respuesta es len(y)+m de largo,

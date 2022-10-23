@@ -1,5 +1,5 @@
 
-Fuerza Bruta
+Programacion Dinamica
 Beneficio maximo: 162
-Objetos seleccionados de peso: [10, 10, 8] y valor: [60, 62, 40]
-Tiempo de ejecucion: 0.00015354156494140625
+Los objetos seleccionados son: [8, 10, 10]
+Tiempo de ejecucion: 6.508827209472656e-05

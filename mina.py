@@ -2,7 +2,7 @@
 import sys
 import os
 import time
-
+#Esta funcion se encargará de eliminar el archivo txt
 def removeFile():
     try:
         os.remove("resultado_mina.txt")
@@ -43,6 +43,9 @@ def separarDatos(nombre_archivo):
     return datos2
 
 #---------------------------------- Algoritmo Fuerza Bruta ----------------------------------
+"""Entradas: matriz de oro, numero de columnas y numero de filas
+Salidas: cantidad maxima de oro que se puede recolectar
+Restricciones: ninguna"""
 def mina_fuerza_bruta(gold, n, m):
     oro_maximo = 0
 
@@ -69,6 +72,9 @@ def mina_aux(oro, x, y, filas, columnas):
 
 
 #---------------------------------- Algoritmo Programacion Dinamica ----------------------------------
+"""Entradas: matriz de oro, numero de columnas y numero de filas
+Salidas: cantidad maxima de oro que se puede recolectar
+Restricciones: ninguna"""
 def mina_pd(valor, m, n):
 
     # Se crea la matriz
@@ -114,6 +120,7 @@ def mina_pd(valor, m, n):
 
 
 def main():
+    #Se asegura del tipo de algoritmo que se va a usar
     if sys.argv[1] == "1":
         removeFile()
         datos = separarDatos(sys.argv[2])
@@ -125,6 +132,7 @@ def main():
         writeFile("Tiempo de ejecucion: " + str(final - inicio))
         print("Ejecucion terminada correctamente")
         exit(0)
+    #Se asegura del tipo de algoritmo que se va a usar
     elif sys.argv[1] == "2":
         removeFile()
         datos = separarDatos(sys.argv[2])

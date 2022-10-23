@@ -18,7 +18,7 @@ def readFile(nombre_archivo):
     reader.close()
     return file
 
-# Esta funcion se encargar de escribir en el archivo txt
+# Esta funcion se encargará de escribir en el archivo txt
 def writeFile(text):
     reader = open("resultado_mochila.txt", 'a')
     if type(text) == type(list):
@@ -78,6 +78,9 @@ def beneficio_total(objetos):
 
 
 #--------------------------------------Mochila por medio de Fuerza Bruta--------------------------------------
+"""Entradas: objetos: lista de objetos
+Salidas: lista de objetos que maximiza el beneficio
+Restricciones: ninguna"""
 def mochila_fuerza_bruta(objetos, capacidad):
 
     resultado = max(mochila_fuerza_bruta_aux(objetos, capacidad), key=beneficio_total)
@@ -116,6 +119,11 @@ def mochila_fuerza_bruta_aux(objetos, peso_restante):
 
 
 #--------------------------------------Mochila por medio de Programacion Dinamica--------------------------------------
+"""Entradas: objetos: lista de objetos
+Salidas: lista de objetos que maximiza el beneficio
+Restricciones: no hay"""
+
+
 def mochila_pd (objetos, capacidad):
     pesos = []
     valores = []
@@ -135,19 +143,20 @@ def mochila_pd (objetos, capacidad):
         c += 1
 
     item = 1
+    #Se recorren los objetos en busca de la mejor combinacion
     while item <= len(objetos):
         cabida = 1
         while cabida <= capacidad:
-            maxValWithoutCurr = matriz[item - 1][cabida]
-            maxValWithCurr = 0 
+            valorMaxSinActual = matriz[item - 1][cabida]
+            valorMaxActual = 0
 
-            weightOfCurr = pesos[item - 1] 
-            if cabida >= weightOfCurr:
-                maxValWithCurr = valores[item - 1] 
+            pesoActual = pesos[item - 1]
+            if cabida >= pesoActual:
+                valorMaxActual = valores[item - 1]
 
-                remainingCapacity = cabida - weightOfCurr
-                maxValWithCurr += matriz[item - 1][remainingCapacity] 
-            matriz[item][cabida] = max(maxValWithoutCurr, maxValWithCurr)
+                restante = cabida - pesoActual
+                valorMaxActual += matriz[item - 1][restante]
+            matriz[item][cabida] = max(valorMaxSinActual, valorMaxActual)
             cabida += 1
         item += 1
 
@@ -167,6 +176,7 @@ def mochila_pd (objetos, capacidad):
 
 
 def main():
+    #Se asegura del tipo de algoritmo que se va a usar
     if sys.argv[1] == "1":
         removeFile()
         datos = separarDatos(sys.argv[2])
@@ -186,6 +196,7 @@ def main():
         writeFile("Tiempo de ejecucion: " + str(final - inicio))
         print("Ejecucion terminada correctamente")
         exit(0)
+    #Se asegura del tipo de algoritmo que se va a usar
     elif sys.argv[1] == "2":
         removeFile()
         datos = separarDatos(sys.argv[2])
